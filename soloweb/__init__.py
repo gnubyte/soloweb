@@ -5,7 +5,7 @@ A production-grade async web framework for Python that functions exactly like Fl
 but is async by default and uses zero external dependencies.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.2.0"
 __author__ = "Patrick Hastings"
 __description__ = "A production-grade async web framework with zero external dependencies"
 
@@ -27,6 +27,101 @@ import mimetypes
 import os
 from contextlib import asynccontextmanager
 from collections import defaultdict
+
+# Import template engine
+try:
+    from .templates import Template, render_template as template_render
+except ImportError:
+    # Fallback if templates module is not available
+    def template_render(template_string: str, **context) -> str:
+        return f"<h1>Template: {template_string}</h1><p>Context: {context}</p>"
+
+
+class Blueprint:
+    """Blueprint for modular application organization (MVC support)"""
+    
+    def __init__(self, name: str, url_prefix: str = '', template_folder: str = None, static_folder: str = None):
+        self.name = name
+        self.url_prefix = url_prefix.rstrip('/')
+        self.template_folder = template_folder
+        self.static_folder = static_folder
+        self.routes: List[tuple] = []
+        self.before_request_handlers: List[Callable] = []
+        self.after_request_handlers: List[Callable] = []
+        self.error_handlers: Dict[int, Callable] = {}
+        self.middleware: List['Middleware'] = []
+        self.app = None
+    
+    def route(self, rule: str, methods: Optional[List[str]] = None):
+        """Decorator for adding routes to the blueprint"""
+        if methods is None:
+            methods = ['GET']
+        
+        def decorator(f):
+            # Store the route with the blueprint prefix
+            full_rule = f"{self.url_prefix}{rule}"
+            self.routes.append((methods, full_rule, f))
+            return f
+        return decorator
+    
+    def before_request(self, f):
+        """Decorator for before request handlers"""
+        self.before_request_handlers.append(f)
+        return f
+    
+    def after_request(self, f):
+        """Decorator for after request handlers"""
+        self.after_request_handlers.append(f)
+        return f
+    
+    def errorhandler(self, code: int):
+        """Decorator for error handlers"""
+        def decorator(f):
+            self.error_handlers[code] = f
+            return f
+        return decorator
+    
+    def add_middleware(self, middleware: 'Middleware'):
+        """Add middleware to the blueprint"""
+        self.middleware.append(middleware)
+    
+    def register(self, app: 'AsyncFlask'):
+        """Register the blueprint with an application"""
+        self.app = app
+        
+        # Register routes
+        for methods, rule, handler in self.routes:
+            for method in methods:
+                app.router.add_route(method.upper(), rule, handler)
+        
+        # Register before request handlers
+        for handler in self.before_request_handlers:
+            app.before_request_handlers.append(handler)
+        
+        # Register after request handlers
+        for handler in self.after_request_handlers:
+            app.after_request_handlers.append(handler)
+        
+        # Register error handlers
+        for code, handler in self.error_handlers.items():
+            app.error_handlers[code] = handler
+        
+        # Register middleware
+        for middleware in self.middleware:
+            app.middleware.append(middleware)
+    
+    def url_for(self, endpoint: str, **kwargs) -> str:
+        """Generate URL for endpoint within this blueprint"""
+        # Try to find the route for this endpoint in the app's router
+        route = self.app.router.get_route_for_endpoint(endpoint)
+        if route:
+            for key, value in kwargs.items():
+                route = route.replace(f'<{key}>', str(value))
+                route = route.replace(f'<int:{key}>', str(value))
+                route = route.replace(f'<str:{key}>', str(value))
+            return route
+        # Fallback: just return /<blueprint>/<endpoint>
+        return f"{self.url_prefix}/{endpoint}"
 
 
 class Request:
@@ -184,23 +279,31 @@ class Router:
     
     def __init__(self):
         self.routes: List[tuple] = []
+        self.endpoints: Dict[str, str] = {}  # endpoint -> route mapping
     
     def add_route(self, method: str, pattern: str, handler: Callable):
         """Add a route with pattern matching"""
         # Convert Flask-style patterns to regex
         regex_pattern = self._convert_pattern(pattern)
         self.routes.append((method, regex_pattern, handler))
+        
+        # Store endpoint mapping for url_for
+        handler_name = handler.__name__
+        self.endpoints[handler_name] = pattern
     
     def _convert_pattern(self, pattern: str) -> str:
         """Convert Flask-style URL patterns to regex patterns"""
-        # Replace <type:name> with regex groups
-        pattern = re.sub(r'<\w+:(\w+)>', r'(?P<\1>[^/]+)', pattern)
-        # Replace <name> with regex groups
-        pattern = re.sub(r'<(\w+)>', r'(?P<\1>[^/]+)', pattern)
-        # Escape everything else
-        pattern = re.escape(pattern)
-        # Unescape the regex group parentheses and ?P<name>
-        pattern = pattern.replace(r'\(\?P<', r'(?P<').replace(r'>\[\^/\]\+\)', r'>[^/]+)')
+        def replacer(match):
+            type_ = match.group(1)
+            name = match.group(2)
+            if type_ == 'int':
+                return f'(?P<{name}>\\d+)'
+            elif type_ == 'str' or type_ is None:
+                return f'(?P<{name}>[^/]+)'
+            else:
+                return f'(?P<{name}>[^/]+)'
+        # Match <type:name> or <name>
+        pattern = re.sub(r'<(?:(int|str):)?(\w+)>', replacer, pattern)
         return f'^{pattern}$'
     
     def match_route(self, method: str, path: str) -> Optional[tuple]:
@@ -211,6 +314,10 @@ class Router:
                 if match:
                     return handler, match.groupdict()
         return None
+    
+    def get_route_for_endpoint(self, endpoint: str) -> Optional[str]:
+        """Get route pattern for an endpoint"""
+        return self.endpoints.get(endpoint)
 
 
 class Middleware:
@@ -250,7 +357,7 @@ class CORSMiddleware(Middleware):
 
 
 class AsyncFlask:
-    """Enhanced Flask-like async web framework"""
+    """Enhanced Flask-like async web framework with blueprint support"""
     
     def __init__(self, name: str = __name__, secret_key: Optional[str] = None):
         self.name = name
@@ -263,6 +370,15 @@ class AsyncFlask:
         self.debug = False
         self.secret_key = secret_key or secrets.token_hex(32)
         self.session = Session(self.secret_key)
+        self.blueprints: Dict[str, Blueprint] = {}
+    
+    def register_blueprint(self, blueprint: Blueprint):
+        """Register a blueprint with the application"""
+        if blueprint.name in self.blueprints:
+            raise ValueError(f"Blueprint '{blueprint.name}' is already registered")
+        
+        self.blueprints[blueprint.name] = blueprint
+        blueprint.register(self)
     
     def route(self, rule: str, methods: Optional[List[str]] = None):
         """Decorator for adding routes"""
@@ -301,8 +417,22 @@ class AsyncFlask:
         self.static_folder = folder
     
     def url_for(self, endpoint: str, **kwargs) -> str:
-        """Generate URL for endpoint (simplified)"""
-        # This is a simplified implementation
+        """Generate URL for endpoint with blueprint support"""
+        # Handle blueprint endpoints (blueprint.endpoint)
+        if '.' in endpoint:
+            blueprint_name, endpoint_name = endpoint.split('.', 1)
+            if blueprint_name in self.blueprints:
+                blueprint = self.blueprints[blueprint_name]
+                return blueprint.url_for(endpoint_name, **kwargs)
+        
+        # Handle regular endpoints
+        route = self.router.get_route_for_endpoint(endpoint)
+        if route:
+            # Simple parameter substitution (basic implementation)
+            for key, value in kwargs.items():
+                route = route.replace(f'<{key}>', str(value))
+            return route
+        
         return f"/{endpoint}"
     
     def redirect(self, location: str, code: int = 302) -> Response:
@@ -314,9 +444,39 @@ class AsyncFlask:
         return Response(data, headers={'Content-Type': 'application/json'})
     
     def render_template(self, template_name: str, **context) -> str:
-        """Simple template rendering (placeholder)"""
-        # This is a placeholder - in a real implementation you'd use a template engine
-        return f"<h1>Template: {template_name}</h1><p>Context: {context}</p>"
+        """Render a template with the given context"""
+        # For now, we'll use the template string directly
+        # In a full implementation, you'd load templates from files
+        template_string = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>{{ title | default('Soloweb App') }}</title>
+        </head>
+        <body>
+            <h1>{{ title | default('Welcome') }}</h1>
+            <div class="content">
+                {{ content | default('No content provided') }}
+            </div>
+            {% if user %}
+            <div class="user-info">
+                <p>Welcome, {{ user.name | default(user) }}!</p>
+            </div>
+            {% endif %}
+            {% if items %}
+            <ul>
+                {% for item in items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </body>
+        </html>
+        """
+        
+        # Add template_name to context for debugging
+        context['template_name'] = template_name
+        return template_render(template_string, **context)
     
     async def handle_request(self, request: Request) -> Response:
         """Handle an incoming request"""
@@ -497,4 +657,7 @@ def redirect(location: str, code: int = 302) -> Response:
     return app.redirect(location, code)
 
 def url_for(endpoint: str, **kwargs) -> str:
-    return app.url_for(endpoint, **kwargs) 
+    return app.url_for(endpoint, **kwargs)
+
+def create_blueprint(name: str, url_prefix: str = '', template_folder: str = None, static_folder: str = None):
+    return Blueprint(name, url_prefix, template_folder, static_folder) 

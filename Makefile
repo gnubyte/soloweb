@@ -82,9 +82,9 @@ cli-test: ## Test the CLI
 version: ## Show current version
 	@python3 -c "import soloweb; print(soloweb.__version__)"
 
-bump-version: ## Bump version (usage: make bump-version VERSION=1.1.0)
+bump-version: ## Bump version (usage: make bump-version VERSION=1.2.0)
 	@if [ -z "$(VERSION)" ]; then \
-		echo "Usage: make bump-version VERSION=1.1.0"; \
+		echo "Usage: make bump-version VERSION=1.2.0"; \
 		exit 1; \
 	fi
 	@echo "Bumping version to $(VERSION)..."

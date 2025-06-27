@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
 Test suite for the Soloweb framework
-Tests basic functionality, routing, and async operations
+Tests basic functionality, routing, async operations, and blueprints
 """
 
 import asyncio
 import json
 import time
-from soloweb import AsyncFlask, Request, Response, CORSMiddleware
+from soloweb import AsyncFlask, Request, Response, CORSMiddleware, Blueprint
 
 
 def test_basic_routing():
@@ -180,10 +180,240 @@ def test_error_handling():
     print("✅ Error handling tests passed")
 
 
+def test_blueprint_basic():
+    """Test basic blueprint functionality"""
+    print("Testing basic blueprint functionality...")
+    
+    app = AsyncFlask("test_app")
+    
+    # Create a blueprint
+    auth_bp = Blueprint('auth', url_prefix='/auth')
+    
+    @auth_bp.route('/login')
+    async def login(request):
+        return "Login page"
+    
+    @auth_bp.route('/logout')
+    async def logout(request):
+        return "Logout page"
+    
+    # Register blueprint
+    app.register_blueprint(auth_bp)
+    
+    # Test that routes are registered with prefix
+    route_match = app.router.match_route('GET', '/auth/login')
+    assert route_match is not None, "Blueprint route should be registered with prefix"
+    
+    route_match = app.router.match_route('GET', '/auth/logout')
+    assert route_match is not None, "Blueprint route should be registered with prefix"
+    
+    # Test that blueprint is stored
+    assert 'auth' in app.blueprints, "Blueprint should be stored in app"
+    assert app.blueprints['auth'] == auth_bp, "Blueprint should be accessible"
+    
+    print("✅ Basic blueprint tests passed")
+
+
+def test_blueprint_mvc():
+    """Test blueprint for MVC architecture"""
+    print("Testing blueprint MVC architecture...")
+    
+    app = AsyncFlask("test_app")
+    
+    # Create user blueprint (Model-View-Controller)
+    users_bp = Blueprint('users', url_prefix='/users')
+    
+    # Controller functions
+    @users_bp.route('/')
+    async def list_users(request):
+        # This would normally fetch from a database
+        users = [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
+        return Response(users)
+    
+    @users_bp.route('/<int:user_id>')
+    async def get_user(request, user_id):
+        # This would normally fetch from a database
+        user = {"id": user_id, "name": f"User {user_id}"}
+        return Response(user)
+    
+    @users_bp.route('/', methods=['POST'])
+    async def create_user(request):
+        # This would normally save to a database
+        user_data = request.json
+        return Response({"message": "User created", "user": user_data}, 201)
+    
+    # Register blueprint
+    app.register_blueprint(users_bp)
+    
+    # Test MVC routes
+    route_match = app.router.match_route('GET', '/users/')
+    assert route_match is not None, "List users route should be registered"
+    
+    route_match = app.router.match_route('GET', '/users/123')
+    assert route_match is not None, "Get user route should be registered"
+    handler, params = route_match
+    assert params['user_id'] == '123', "User ID parameter should be extracted"
+    
+    route_match = app.router.match_route('POST', '/users/')
+    assert route_match is not None, "Create user route should be registered"
+    
+    print("✅ Blueprint MVC tests passed")
+
+
+def test_blueprint_hooks():
+    """Test blueprint before/after request hooks"""
+    print("Testing blueprint hooks...")
+    
+    app = AsyncFlask("test_app")
+    
+    # Create blueprint with hooks
+    api_bp = Blueprint('api', url_prefix='/api')
+    
+    @api_bp.before_request
+    async def before_api_request():
+        # This would normally do authentication, logging, etc.
+        pass
+    
+    @api_bp.after_request
+    async def after_api_request(response):
+        # This would normally add headers, logging, etc.
+        response.headers['X-API-Version'] = '1.0'
+        return response
+    
+    @api_bp.route('/data')
+    async def get_data(request):
+        return {"data": "test"}
+    
+    # Register blueprint
+    app.register_blueprint(api_bp)
+    
+    # Test that hooks are registered
+    assert len(app.before_request_handlers) == 1, "Blueprint before_request should be registered"
+    assert len(app.after_request_handlers) == 1, "Blueprint after_request should be registered"
+    
+    print("✅ Blueprint hooks tests passed")
+
+
+def test_blueprint_error_handlers():
+    """Test blueprint error handlers"""
+    print("Testing blueprint error handlers...")
+    
+    app = AsyncFlask("test_app")
+    
+    # Create blueprint with error handlers
+    admin_bp = Blueprint('admin', url_prefix='/admin')
+    
+    @admin_bp.errorhandler(403)
+    async def forbidden(request):
+        return Response("Access denied", 403)
+    
+    @admin_bp.route('/dashboard')
+    async def dashboard(request):
+        return "Admin dashboard"
+    
+    # Register blueprint
+    app.register_blueprint(admin_bp)
+    
+    # Test that error handlers are registered
+    assert 403 in app.error_handlers, "Blueprint error handler should be registered"
+    
+    print("✅ Blueprint error handlers tests passed")
+
+
+def test_blueprint_url_for():
+    """Test blueprint URL generation"""
+    print("Testing blueprint URL generation...")
+    
+    app = AsyncFlask("test_app")
+    
+    # Create blueprint
+    blog_bp = Blueprint('blog', url_prefix='/blog')
+    
+    @blog_bp.route('/posts/<int:post_id>')
+    async def get_post(request, post_id):
+        return f"Post {post_id}"
+    
+    # Register blueprint
+    app.register_blueprint(blog_bp)
+    
+    # Test URL generation
+    url = app.url_for('blog.get_post', post_id=123)
+    assert url == '/blog/posts/123', "Blueprint URL should be generated correctly"
+    
+    # Test blueprint internal URL generation
+    url = blog_bp.url_for('get_post', post_id=456)
+    assert url == '/blog/posts/456', "Blueprint internal URL should be generated correctly"
+    
+    print("✅ Blueprint URL generation tests passed")
+
+
+def test_multiple_blueprints():
+    """Test multiple blueprints working together"""
+    print("Testing multiple blueprints...")
+    
+    app = AsyncFlask("test_app")
+    
+    # Create multiple blueprints
+    auth_bp = Blueprint('auth', url_prefix='/auth')
+    users_bp = Blueprint('users', url_prefix='/users')
+    admin_bp = Blueprint('admin', url_prefix='/admin')
+    
+    @auth_bp.route('/login')
+    async def login(request):
+        return "Login"
+    
+    @users_bp.route('/profile')
+    async def profile(request):
+        return "Profile"
+    
+    @admin_bp.route('/dashboard')
+    async def dashboard(request):
+        return "Dashboard"
+    
+    # Register all blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(admin_bp)
+    
+    # Test all routes are registered
+    assert app.router.match_route('GET', '/auth/login') is not None, "Auth route should be registered"
+    assert app.router.match_route('GET', '/users/profile') is not None, "Users route should be registered"
+    assert app.router.match_route('GET', '/admin/dashboard') is not None, "Admin route should be registered"
+    
+    # Test blueprint count
+    assert len(app.blueprints) == 3, "All blueprints should be registered"
+    
+    print("✅ Multiple blueprints tests passed")
+
+
+def test_blueprint_duplicate_registration():
+    """Test that duplicate blueprint registration fails"""
+    print("Testing duplicate blueprint registration...")
+    
+    app = AsyncFlask("test_app")
+    
+    # Create blueprint
+    bp1 = Blueprint('test', url_prefix='/test')
+    bp2 = Blueprint('test', url_prefix='/test2')
+    
+    # Register first blueprint
+    app.register_blueprint(bp1)
+    
+    # Try to register duplicate blueprint
+    try:
+        app.register_blueprint(bp2)
+        assert False, "Duplicate blueprint registration should fail"
+    except ValueError:
+        # Expected behavior
+        pass
+    
+    print("✅ Duplicate blueprint registration tests passed")
+
+
 def run_all_tests():
     """Run all tests"""
     print("Running Soloweb Framework Tests")
-    print("=" * 40)
+    print("=" * 50)
     
     try:
         test_basic_routing()
@@ -194,8 +424,17 @@ def run_all_tests():
         asyncio.run(test_async_operations())
         test_error_handling()
         
-        print("=" * 40)
-        print("🎉 All tests passed! The framework is working correctly.")
+        # Blueprint tests
+        test_blueprint_basic()
+        test_blueprint_mvc()
+        test_blueprint_hooks()
+        test_blueprint_error_handlers()
+        test_blueprint_url_for()
+        test_multiple_blueprints()
+        test_blueprint_duplicate_registration()
+        
+        print("=" * 50)
+        print("🎉 All tests passed! The framework with blueprints is working correctly.")
         
     except Exception as e:
         print(f"❌ Test failed: {e}")
