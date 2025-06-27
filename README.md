@@ -20,13 +20,27 @@ A production-grade async web framework for Python that functions exactly like Fl
 
 ## 📦 Installation
 
+### From PyPI (when available)
+```bash
+pip install soloweb
+```
+
+### From GitHub Releases
+```bash
+# Install specific version
+pip install https://github.com/gnubyte/soloweb/releases/download/v1.0.0/soloweb-1.0.0-py3-none-any.whl
+
+# Or install from source
+pip install git+https://github.com/gnubyte/soloweb.git@v1.0.0
+```
+
+### Manual Installation
 No installation required! Just copy the framework files to your project:
 
 ```bash
 # Copy the framework files
 cp soloweb.py your_project/
 ```
-
 ## 🎯 Quick Start
 
 ```python

@@ -1,0 +1,2 @@
+# Soloweb has zero external dependencies!
+# This file is intentionally empty as the framework uses only standard Python libraries. 

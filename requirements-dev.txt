@@ -1,0 +1,22 @@
+# Development dependencies for Soloweb
+# These are only needed for development, testing, and documentation
+
+# Testing
+pytest>=6.0
+pytest-asyncio>=0.18.0
+pytest-cov>=2.10
+
+# Code quality
+black>=21.0
+flake8>=3.8
+mypy>=0.800
+isort>=5.0
+
+# Documentation
+sphinx>=4.0
+sphinx-rtd-theme>=1.0
+
+# Build tools
+wheel>=0.37
+setuptools>=45.0
+twine>=3.4 
