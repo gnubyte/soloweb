@@ -28,10 +28,10 @@ pip install soloweb
 ### From GitHub Releases
 ```bash
 # Install specific version
-pip install https://github.com/gnubyte/soloweb/releases/download/v1.0.0/soloweb-1.0.0-py3-none-any.whl
+pip install https://github.com/gnubyte/soloweb/releases/download/v1.2.0/soloweb-1.2.0-py3-none-any.whl
 
 # Or install from source
-pip install git+https://github.com/gnubyte/soloweb.git@v1.0.0
+pip install git+https://github.com/gnubyte/soloweb.git@v1.2.0
 ```
 
 ### Manual Installation
