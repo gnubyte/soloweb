@@ -1,0 +1,2 @@
+[console_scripts]
+soloweb = soloweb.cli:main

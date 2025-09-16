@@ -17,7 +17,7 @@ production-ready async web applications. It covers:
 Key Features Demonstrated:
 - Zero external dependencies
 - Async by default
-- Flask-like syntax
+- Web-like syntax
 - Blueprint support for modular apps
 - Jinja-like template engine
 - Built-in session management
@@ -31,7 +31,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 
 from soloweb import (
-    AsyncFlask, Blueprint, Request, Response, 
+    AsyncWeb, Blueprint, Request, Response, 
     CORSMiddleware, render_template, jsonify, redirect, url_for
 )
 
@@ -40,12 +40,12 @@ from soloweb import (
 # 1. APPLICATION SETUP & CONFIGURATION
 # ============================================================================
 
-def create_app(config: Dict[str, Any] = None) -> AsyncFlask:
+def create_app(config: Dict[str, Any] = None) -> AsyncWeb:
     """
     Application factory pattern - recommended for production apps.
     Allows for different configurations (dev, test, prod).
     """
-    app = AsyncFlask(__name__, secret_key="your-secret-key-here")
+    app = AsyncWeb(__name__, secret_key="your-secret-key-here")
     
     # Configuration
     app.debug = config.get('debug', False) if config else False
@@ -431,7 +431,7 @@ def require_admin(f):
 # 4. MAIN APPLICATION ROUTES
 # ============================================================================
 
-def setup_main_routes(app: AsyncFlask):
+def setup_main_routes(app: AsyncWeb):
     """Setup main application routes"""
     
     @app.route('/')
@@ -484,7 +484,7 @@ def setup_main_routes(app: AsyncFlask):
                     <ul>
                         <li><strong>Zero Dependencies:</strong> No external packages required</li>
                         <li><strong>Async by Default:</strong> Built for modern Python async/await</li>
-                        <li><strong>Flask-like Syntax:</strong> Familiar and intuitive API</li>
+                        <li><strong>Web-like Syntax:</strong> Familiar and intuitive API</li>
                         <li><strong>Blueprint Support:</strong> Modular application architecture</li>
                         <li><strong>Template Engine:</strong> Jinja-like templating with improvements</li>
                         <li><strong>Built-in Security:</strong> Session management, CORS, etc.</li>
@@ -589,7 +589,7 @@ curl -X POST http://localhost:5000/api/v1/users \\
 # 5. APPLICATION FACTORY & CONFIGURATION
 # ============================================================================
 
-def create_production_app() -> AsyncFlask:
+def create_production_app() -> AsyncWeb:
     """Create production application with all features"""
     app = create_app({'debug': False})
     
@@ -604,7 +604,7 @@ def create_production_app() -> AsyncFlask:
     
     return app
 
-def create_development_app() -> AsyncFlask:
+def create_development_app() -> AsyncWeb:
     """Create development application with debug features"""
     app = create_app({'debug': True})
     

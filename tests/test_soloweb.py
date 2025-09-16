@@ -7,14 +7,14 @@ Tests basic functionality, routing, async operations, and blueprints
 import asyncio
 import json
 import time
-from soloweb import AsyncFlask, Request, Response, CORSMiddleware, Blueprint
+from soloweb import AsyncWeb, Request, Response, CORSMiddleware, Blueprint
 
 
 def test_basic_routing():
     """Test basic routing functionality"""
     print("Testing basic routing...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     @app.route('/')
     async def home(request):
@@ -94,7 +94,7 @@ def test_session_management():
     """Test session management functionality"""
     print("Testing session management...")
     
-    app = AsyncFlask("test_app", secret_key="test_secret")
+    app = AsyncWeb("test_app", secret_key="test_secret")
     
     # Create session
     session_data = {"user_id": 123, "username": "alice"}
@@ -123,7 +123,7 @@ def test_middleware():
     """Test middleware functionality"""
     print("Testing middleware...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     cors_middleware = CORSMiddleware()
     app.add_middleware(cors_middleware)
     
@@ -143,7 +143,7 @@ async def test_async_operations():
     """Test async operations"""
     print("Testing async operations...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     @app.route('/async-test')
     async def async_test(request):
@@ -164,7 +164,7 @@ def test_error_handling():
     """Test error handling functionality"""
     print("Testing error handling...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     @app.errorhandler(404)
     async def not_found(request):
@@ -184,7 +184,7 @@ def test_blueprint_basic():
     """Test basic blueprint functionality"""
     print("Testing basic blueprint functionality...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     # Create a blueprint
     auth_bp = Blueprint('auth', url_prefix='/auth')
@@ -218,7 +218,7 @@ def test_blueprint_mvc():
     """Test blueprint for MVC architecture"""
     print("Testing blueprint MVC architecture...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     # Create user blueprint (Model-View-Controller)
     users_bp = Blueprint('users', url_prefix='/users')
@@ -264,7 +264,7 @@ def test_blueprint_hooks():
     """Test blueprint before/after request hooks"""
     print("Testing blueprint hooks...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     # Create blueprint with hooks
     api_bp = Blueprint('api', url_prefix='/api')
@@ -298,7 +298,7 @@ def test_blueprint_error_handlers():
     """Test blueprint error handlers"""
     print("Testing blueprint error handlers...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     # Create blueprint with error handlers
     admin_bp = Blueprint('admin', url_prefix='/admin')
@@ -324,7 +324,7 @@ def test_blueprint_url_for():
     """Test blueprint URL generation"""
     print("Testing blueprint URL generation...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     # Create blueprint
     blog_bp = Blueprint('blog', url_prefix='/blog')
@@ -351,7 +351,7 @@ def test_multiple_blueprints():
     """Test multiple blueprints working together"""
     print("Testing multiple blueprints...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     # Create multiple blueprints
     auth_bp = Blueprint('auth', url_prefix='/auth')
@@ -390,7 +390,7 @@ def test_blueprint_duplicate_registration():
     """Test that duplicate blueprint registration fails"""
     print("Testing duplicate blueprint registration...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     # Create blueprint
     bp1 = Blueprint('test', url_prefix='/test')

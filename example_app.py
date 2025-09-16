@@ -11,7 +11,7 @@ This example shows how to organize a web application using:
 """
 
 import asyncio
-from soloweb import AsyncFlask, Blueprint, Response, Request
+from soloweb import AsyncWeb, Blueprint, Response, Request
 
 
 # ============================================================================
@@ -355,7 +355,7 @@ async def api_list_posts(request: Request):
 # MAIN APPLICATION
 # ============================================================================
 
-app = AsyncFlask(__name__, secret_key="your-secret-key-here")
+app = AsyncWeb(__name__, secret_key="your-secret-key-here")
 
 # Register all blueprints
 app.register_blueprint(auth_bp)

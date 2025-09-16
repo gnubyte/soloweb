@@ -14,7 +14,7 @@ authors = [
 maintainers = [
     {name = "Patrick Hastings", email = "patrick@example.com"}
 ]
-keywords = ["web framework", "async", "flask-like", "zero-dependencies", "http", "server"]
+keywords = ["web framework", "async", "web-like", "zero-dependencies", "http", "server"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",

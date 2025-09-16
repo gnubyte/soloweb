@@ -7,14 +7,14 @@ Tests basic functionality, routing, and async operations
 import asyncio
 import json
 import time
-from soloweb import AsyncFlask, Request, Response, CORSMiddleware
+from soloweb import AsyncWeb, Request, Response, CORSMiddleware
 
 
 def test_basic_routing():
     """Test basic routing functionality"""
     print("Testing basic routing...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     @app.route('/')
     async def home(request):
@@ -94,7 +94,7 @@ def test_session_management():
     """Test session management functionality"""
     print("Testing session management...")
     
-    app = AsyncFlask("test_app", secret_key="test_secret")
+    app = AsyncWeb("test_app", secret_key="test_secret")
     
     # Create session
     session_data = {"user_id": 123, "username": "alice"}
@@ -123,7 +123,7 @@ def test_middleware():
     """Test middleware functionality"""
     print("Testing middleware...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     cors_middleware = CORSMiddleware()
     app.add_middleware(cors_middleware)
     
@@ -143,7 +143,7 @@ async def test_async_operations():
     """Test async operations"""
     print("Testing async operations...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     @app.route('/async-test')
     async def async_test(request):
@@ -164,7 +164,7 @@ def test_error_handling():
     """Test error handling functionality"""
     print("Testing error handling...")
     
-    app = AsyncFlask("test_app")
+    app = AsyncWeb("test_app")
     
     @app.errorhandler(404)
     async def not_found(request):

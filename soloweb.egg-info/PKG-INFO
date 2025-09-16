@@ -1,6 +1,58 @@
+Metadata-Version: 2.4
+Name: soloweb
+Version: 1.2.0
+Summary: A production-grade async web framework with zero external dependencies
+Home-page: https://github.com/yourusername/soloweb
+Author: Patrick Hastings
+Author-email: Patrick Hastings <patrick@example.com>
+Maintainer-email: Patrick Hastings <patrick@example.com>
+License: MIT
+Project-URL: Homepage, https://github.com/yourusername/soloweb
+Project-URL: Documentation, https://github.com/yourusername/soloweb#readme
+Project-URL: Repository, https://github.com/yourusername/soloweb
+Project-URL: Bug Tracker, https://github.com/yourusername/soloweb/issues
+Keywords: web framework,async,web-like,zero-dependencies,http,server
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI :: Application
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Framework :: AsyncIO
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Provides-Extra: dev
+Requires-Dist: pytest>=6.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.18.0; extra == "dev"
+Requires-Dist: pytest-cov>=2.10; extra == "dev"
+Requires-Dist: black>=21.0; extra == "dev"
+Requires-Dist: flake8>=3.8; extra == "dev"
+Requires-Dist: mypy>=0.800; extra == "dev"
+Requires-Dist: isort>=5.0; extra == "dev"
+Provides-Extra: docs
+Requires-Dist: sphinx>=4.0; extra == "docs"
+Requires-Dist: sphinx-rtd-theme>=1.0; extra == "docs"
+Dynamic: author
+Dynamic: home-page
+Dynamic: license-file
+Dynamic: platform
+Dynamic: requires-python
+
 # Soloweb - Production-Grade Async Web Framework
 
 A production-grade async web framework for Python that functions like popular web frameworks but is async by default and uses **zero external dependencies**. Built entirely with standard Python libraries.
+
+This project is intended to take things I loved about flask but not require anything outside of this project itself after watching some really nasty things happen to dependencies the last few years. Peace of mind that all the code lives in just this one place and can be read.
 
 ## 🚀 Features
 

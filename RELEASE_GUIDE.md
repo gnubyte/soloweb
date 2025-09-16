@@ -83,7 +83,7 @@ A production-grade async web framework with zero external dependencies.
 ### Features
 - ✅ Async by default
 - ✅ Zero external dependencies  
-- ✅ Flask-like API
+- ✅ Web-like API
 - ✅ Production ready
 - ✅ Type hints
 - ✅ CORS support

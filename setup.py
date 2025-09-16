@@ -50,7 +50,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Framework :: AsyncIO",
     ],
-    keywords="web framework, async, flask-like, zero-dependencies, http, server",
+    keywords="web framework, async, web-like, zero-dependencies, http, server",
     packages=find_packages(),
     python_requires=">=3.7",
     install_requires=[

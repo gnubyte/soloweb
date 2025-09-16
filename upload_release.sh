@@ -86,7 +86,7 @@ A production-grade async web framework with zero external dependencies.
 ### Features
 - ✅ Async by default
 - ✅ Zero external dependencies  
-- ✅ Flask-like API
+- ✅ Web-like API
 - ✅ Production ready
 - ✅ Type hints
 - ✅ CORS support
@@ -131,13 +131,13 @@ print_status "Updating README with GitHub installation instructions..."
 cat > README.md.tmp << EOF
 # Soloweb - Production-Grade Async Web Framework
 
-A production-grade async web framework for Python that functions exactly like Flask but is async by default and uses **zero external dependencies**. Built entirely with standard Python libraries.
+A production-grade async web framework for Python that functions like popular web frameworks but is async by default and uses **zero external dependencies**. Built entirely with standard Python libraries.
 
 ## 🚀 Features
 
 - **Async by Default**: All route handlers are async and support concurrent operations
 - **Zero Dependencies**: Uses only standard Python libraries (no pip install required)
-- **Flask-like API**: Familiar decorators and patterns for Flask developers
+- **Web-like API**: Familiar decorators and patterns for web developers
 - **Production Ready**: Includes middleware, sessions, error handling, and more
 - **Type Hints**: Full type annotation support for better development experience
 - **CORS Support**: Built-in CORS middleware for cross-origin requests

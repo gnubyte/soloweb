@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release of Soloweb framework
 - Async-by-default web framework with zero external dependencies
-- Flask-like API with decorators and routing
+- Web-like API with decorators and routing
 - Request and Response objects with full HTTP support
 - Session management with secure session handling
 - Middleware support including CORS middleware
@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Zero Dependencies**: Uses only standard Python libraries
 - **Async by Default**: All operations are non-blocking
 - **Production Ready**: Includes security features and error handling
-- **Flask-like API**: Familiar patterns for Flask developers
+- **Web-like API**: Familiar patterns for web developers
 - **Type Hints**: Full type annotation support
 - **High Performance**: Efficient routing and concurrent request handling
 

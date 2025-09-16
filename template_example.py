@@ -10,9 +10,9 @@ This example demonstrates the Soloweb template engine with various features:
 - Real-world use cases
 """
 
-from soloweb import AsyncFlask, render_template
+from soloweb import AsyncWeb, render_template
 
-app = AsyncFlask("template_example")
+app = AsyncWeb("template_example")
 
 
 @app.route('/')
