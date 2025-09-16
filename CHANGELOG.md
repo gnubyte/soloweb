@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2024-12-19
+
+### Changed
+- **BREAKING**: Renamed `AsyncFlask` class to `AsyncWeb` for better branding
+- **BREAKING**: Renamed `async_flask.py` to `async_web.py`
+- Updated all documentation to use generic "web framework" terminology instead of Flask-specific references
+- Changed "Flask-like API" to "Web-like API" throughout documentation
+- Updated all examples and guides to use `AsyncWeb` instead of `AsyncFlask`
+
+### Fixed
+- Removed all Flask references from codebase while maintaining API compatibility
+- Updated package keywords and metadata to reflect generic web framework branding
+
+## [1.2.0] - 2024-01-XX
+
 ## [1.0.0] - 2024-01-XX
 
 ### Added

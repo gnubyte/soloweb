@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: soloweb
-Version: 1.2.0
+Version: 1.3.0
 Summary: A production-grade async web framework with zero external dependencies
 Home-page: https://github.com/yourusername/soloweb
 Author: Patrick Hastings
@@ -52,7 +52,7 @@ Dynamic: requires-python
 
 A production-grade async web framework for Python that functions like popular web frameworks but is async by default and uses **zero external dependencies**. Built entirely with standard Python libraries.
 
-This project is intended to take things I loved about flask but not require anything outside of this project itself after watching some really nasty things happen to dependencies the last few years. Peace of mind that all the code lives in just this one place and can be read.
+The idea here was to have 
 
 ## 🚀 Features
 
@@ -80,10 +80,10 @@ pip install soloweb
 ### From GitHub Releases
 ```bash
 # Install specific version
-pip install https://github.com/gnubyte/soloweb/releases/download/v1.2.0/soloweb-1.2.0-py3-none-any.whl
+pip install https://github.com/gnubyte/soloweb/releases/download/v1.3.0/soloweb-1.3.0-py3-none-any.whl
 
 # Or install from source
-pip install git+https://github.com/gnubyte/soloweb.git@v1.2.0
+pip install git+https://github.com/gnubyte/soloweb.git@v1.3.0
 ```
 
 ### Manual Installation

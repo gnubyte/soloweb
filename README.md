@@ -2,6 +2,8 @@
 
 A production-grade async web framework for Python that functions like popular web frameworks but is async by default and uses **zero external dependencies**. Built entirely with standard Python libraries.
 
+The idea here was to have 
+
 ## 🚀 Features
 
 - **Async by Default**: All route handlers are async and support concurrent operations
@@ -28,10 +30,10 @@ pip install soloweb
 ### From GitHub Releases
 ```bash
 # Install specific version
-pip install https://github.com/gnubyte/soloweb/releases/download/v1.2.0/soloweb-1.2.0-py3-none-any.whl
+pip install https://github.com/gnubyte/soloweb/releases/download/v1.3.0/soloweb-1.3.0-py3-none-any.whl
 
 # Or install from source
-pip install git+https://github.com/gnubyte/soloweb.git@v1.2.0
+pip install git+https://github.com/gnubyte/soloweb.git@v1.3.0
 ```
 
 ### Manual Installation

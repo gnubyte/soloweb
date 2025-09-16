@@ -5,7 +5,7 @@ A production-grade async web framework for Python that functions like popular we
 but is async by default and uses zero external dependencies.
 """
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __author__ = "Patrick Hastings"
 __description__ = "A production-grade async web framework with zero external dependencies"
 
